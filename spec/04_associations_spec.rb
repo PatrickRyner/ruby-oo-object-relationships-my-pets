@@ -1,5 +1,4 @@
 require_relative 'spec_helper.rb'
-
 describe "Associations" do
   before do
     @owner = Owner.new("Timmy")
@@ -55,11 +54,9 @@ describe "Associations" do
         @owner.buy_cat("Whiskers")
         @owner.buy_cat("Garfield")
 
-        expect(@owner.cats).to include(
-          an_object_having_attributes(class: Cat, name: "Whiskers"),
-          an_object_having_attributes(class: Cat, name: "Crookshanks"),
-          an_object_having_attributes(class: Cat, name: "Garfield")
-        )
+        expect(@owner.cats[0].name).to eq("Crookshanks")
+        expect(@owner.cats[1].name).to eq("Whiskers")
+        expect(@owner.cats[2].name).to eq("Garfield")
       end
     end
 
@@ -83,11 +80,9 @@ describe "Associations" do
         @owner.buy_dog("Fido")
         @owner.buy_dog("Rover")
 
-        expect(@owner.dogs).to include(
-          an_object_having_attributes(class: Dog, name: "Fido"),
-          an_object_having_attributes(class: Dog, name: "Snuffles"),
-          an_object_having_attributes(class: Dog, name: "Rover")
-        )
+        expect(@owner.dogs[0].name).to eq("Snuffles")
+        expect(@owner.dogs[1].name).to eq("Fido")
+        expect(@owner.dogs[2].name).to eq("Rover")
       end
     end
 
@@ -98,7 +93,6 @@ describe "Associations" do
         expect(dog.mood).to eq("happy")
       end
     end
-
     describe "#feed_cats" do
       it "feeds cats which makes the cats' moods happy" do
         cat = Cat.new("Muffin", @owner)
@@ -106,33 +100,24 @@ describe "Associations" do
         expect(cat.mood).to eq("happy")
       end
     end
-
     describe "#sell_pets" do
       it 'can sell all its pets, which makes them nervous' do
         fido = Dog.new("Fido", @owner)
         tabby = Cat.new("Tabby", @owner)
-
         [fido, tabby].each {|o| o.mood = "happy" }
-
         @owner.sell_pets
-
         [fido, tabby].each { |o| expect(o.mood).to eq("nervous") }
       end
-
       it 'can sell all its pets, which leaves them without an owner' do
         fido = Dog.new("Fido", @owner)
         tabby = Cat.new("Tabby", @owner)
-
         [fido, tabby].each {|o| o.mood = "happy" }
-
         @owner.sell_pets
-
         [fido, tabby].each { |o| expect(o.owner).to be(nil) }
         expect(@owner.cats.count).to eq(0)
         expect(@owner.dogs.count).to eq(0)
       end
     end
-
     describe "#list_pets" do
       it 'can list off its pets' do
         @owner.buy_cat("Crookshanks")
